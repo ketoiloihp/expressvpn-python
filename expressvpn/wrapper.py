@@ -1,5 +1,6 @@
 import random
 import subprocess
+import re
 
 from expressvpn.commands import *
 
@@ -50,7 +51,8 @@ def print_output(out):
 
 
 def connect_alias(alias):
-    command = VPN_CONNECT + ' ' + str(alias)
+    command = VPN_CONNECT + ' -c --random "' + str(alias) +'"' if IS_MAC else VPN_CONNECT + ' ' + str(alias)
+    print(command)
     out = run_command(command)
     if check_if_string_is_in_output(out, 'We were unable to connect to this VPN location'):
         raise ConnectException()
@@ -77,7 +79,6 @@ def extract_aliases_1(vpn_list):
         aliases.append(alias)
     return aliases
 
-
 def extract_aliases_2(vpn_list):
     """
     Recommended locations:
@@ -92,7 +93,6 @@ def extract_aliases_2(vpn_list):
         except IndexError:
             return aliases
     return aliases
-
 
 def extract_aliases_3(vpn_list):
     """
@@ -114,18 +114,31 @@ def extract_aliases_3(vpn_list):
                 count = count +1
             if alias != '':
               aliases.append(alias)
+            # alias = vpn_item.split()[0]
+            # aliases.append(alias)
         except IndexError:
             continue
+            # return aliases
+    # print('aliases:', aliases)
     return aliases
 
-def random_connect():
+
+def random_connect(list_vpn_region = []):
     # activation_check()
     disconnect()
-    # vpn_list = run_command(VPN_LIST)[0:46]  # we use only US, UK, HK and JP VPN. Fastest ones!
-    vpn_list = run_command(VPN_LIST)
-    # print_output(vpn_list)
-    aliases = extract_aliases(vpn_list)
+    aliases = []
+    if len(list_vpn_region) > 0:
+      aliases = list_vpn_region
+    else:
+      # vpn_list = run_command(VPN_LIST)[0:46]  # we use only US, UK, HK and JP VPN. Fastest ones!
+      vpn_list = run_command(VPN_LIST)
+      # print_output(vpn_list)
+      aliases = extract_aliases(vpn_list)
     random.shuffle(aliases)
     selected_alias = aliases[0]
-    print('Selected alias : {}'.format(selected_alias))
     connect_alias(selected_alias)  # might raise a ConnectException.
+
+def get_vpn_list():
+  vpn_list = run_command(VPN_LIST)
+  aliases = extract_aliases(vpn_list)
+  return aliases
