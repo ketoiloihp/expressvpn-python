@@ -2,6 +2,12 @@
 
 Full bash documentation: [https://www.expressvpn.com/support/vpn-setup/app-for-linux/](https://www.expressvpn.com/support/vpn-setup/app-for-linux/)
 
+On MacOS we use `expresso`. You can use `brew` to install it: (you can read more here: https://github.com/sttz/homebrew-tap)
+
+```bash
+brew cask install sttz/tap/expresso
+```
+
 This will not work on Windows!
 
 
@@ -42,16 +48,26 @@ After login and to logout, simply run:
 ```bash
 expressvpn logout
 ```
+or
 
-NOTE that you will have to activate `expressvpn` again if you logout.
+```bash
+expresso logout
+```
+
+NOTE that you will have to activate `expressvpn`/`expresso` again if you logout.
 
 ## Python bindings
 
 ### Connect
 
-Bash
+Bash On Linux:
 ```bash
 expressvpn connect
+```
+
+Bash On MacOS:
+```bash
+expresso connect
 ```
 
 Python
@@ -86,6 +102,12 @@ random_connect()
 Bash
 ```bash
 expressvpn disconnect
+```
+
+or
+
+```bash
+expresso disconnect
 ```
 
 Python

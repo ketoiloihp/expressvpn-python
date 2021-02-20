@@ -63,7 +63,7 @@ def extract_aliases(vpn_list):
     try:
         return extract_aliases_1(vpn_list)
     except:
-        return extract_aliases_2(vpn_list)
+        return extract_aliases_3(vpn_list) if IS_MAC else extract_aliases_2(vpn_list)
 
 
 def extract_aliases_1(vpn_list):
@@ -94,11 +94,36 @@ def extract_aliases_2(vpn_list):
     return aliases
 
 
+def extract_aliases_3(vpn_list):
+    """
+    Recommended locations:
+    - ALIAS COUNTRY     LOCATION   RECOMMENDED
+    - ----- ---------------    ------------------------------ -----------
+    """
+    aliases = []
+    for vpn_item in vpn_list[3:]:
+        try:
+            count = 0
+            alias = ''
+            for txt in vpn_item.split():
+                if count == 0 and re.match("^-.*$", txt):
+                    continue
+                else:
+                    if not re.match("^\(.*\)$", txt):
+                      alias = txt if count == 0 else alias + ' ' + txt
+                count = count +1
+            if alias != '':
+              aliases.append(alias)
+        except IndexError:
+            continue
+    return aliases
+
 def random_connect():
     # activation_check()
     disconnect()
-    vpn_list = run_command(VPN_LIST)[0:46]  # we use only US, UK, HK and JP VPN. Fastest ones!
-    print_output(vpn_list)
+    # vpn_list = run_command(VPN_LIST)[0:46]  # we use only US, UK, HK and JP VPN. Fastest ones!
+    vpn_list = run_command(VPN_LIST)
+    # print_output(vpn_list)
     aliases = extract_aliases(vpn_list)
     random.shuffle(aliases)
     selected_alias = aliases[0]
